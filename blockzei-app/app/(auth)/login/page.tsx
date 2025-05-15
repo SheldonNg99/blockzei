@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -45,23 +46,26 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg-surface px-4 sm:px-6 lg:px-8">
+            <div className="absolute top-4 right-4">
+                <ThemeToggle />
+            </div>
             <div className="max-w-md w-full space-y-8">
                 {/* Logo and Title */}
                 <div className="text-center">
-                    <h1 className="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                    <h1 className="text-4xl font-bold text-primary mb-2">
                         Blockzei
                     </h1>
-                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p className="mt-2 text-sm text-text-secondary">
                         アカウントにログインして暗号資産の税金計算を始めましょう
                     </p>
                 </div>
 
                 {/* Login Form */}
-                <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <div className="bg-surface-secondary py-8 px-4 shadow-lg rounded-lg sm:px-10 border border-default">
                     <form className="space-y-6" onSubmit={handleCredentialsLogin}>
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label htmlFor="email" className="block text-sm font-medium text-text-primary">
                                 メールアドレス
                             </label>
                             <div className="mt-1">
@@ -73,14 +77,14 @@ export default function LoginPage() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    className="appearance-none block w-full px-3 py-2 border border-default rounded-md shadow-sm placeholder-text-secondary focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface text-text-primary"
                                     placeholder="email@example.com"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label htmlFor="password" className="block text-sm font-medium text-text-primary">
                                 パスワード
                             </label>
                             <div className="mt-1">
@@ -92,7 +96,7 @@ export default function LoginPage() {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    className="appearance-none block w-full px-3 py-2 border border-default rounded-md shadow-sm placeholder-text-secondary focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-surface text-text-primary"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -104,15 +108,15 @@ export default function LoginPage() {
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    className="h-4 w-4 text-primary focus:ring-primary border-default rounded"
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-text-primary">
                                     ログイン状態を保持
                                 </label>
                             </div>
 
                             <div className="text-sm">
-                                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                <a href="#" className="font-medium text-primary hover:text-primary/80">
                                     パスワードを忘れた方
                                 </a>
                             </div>
@@ -122,7 +126,7 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? 'ログイン中...' : 'ログイン'}
                             </button>
@@ -132,10 +136,10 @@ export default function LoginPage() {
                     <div className="mt-6">
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                                <div className="w-full border-t border-default"></div>
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">または</span>
+                                <span className="px-2 bg-surface-secondary text-text-secondary">または</span>
                             </div>
                         </div>
 
@@ -143,7 +147,7 @@ export default function LoginPage() {
                             <button
                                 onClick={handleGoogleLogin}
                                 disabled={isLoading}
-                                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full inline-flex justify-center items-center py-2 px-4 border border-default rounded-md shadow-sm bg-surface text-sm font-medium text-text-primary hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -156,7 +160,7 @@ export default function LoginPage() {
 
                             <button
                                 disabled={isLoading}
-                                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full inline-flex justify-center items-center py-2 px-4 border border-default rounded-md shadow-sm bg-surface text-sm font-medium text-text-primary hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M19.28 3.43L12 9.36L4.72 3.43L12 2L19.28 3.43Z" fill="#627EEA" />
@@ -170,9 +174,9 @@ export default function LoginPage() {
                     </div>
 
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-text-secondary">
                             アカウントをお持ちでない方は{' '}
-                            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                            <Link href="/register" className="font-medium text-primary hover:text-primary/80">
                                 新規登録
                             </Link>
                         </p>

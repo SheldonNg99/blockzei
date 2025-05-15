@@ -1,26 +1,94 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Mode Colors */
+  --color-primary: #5741D9;
+  --color-surface: #F7F9FB;
+  --color-surface-secondary: #FFFFFF;
+  --color-text-primary: #0D1421;
+  --color-text-secondary: #64748B;
+  --color-border: #E5E7EB;
+  --color-accent: #8B7FDB;
+  --color-success: #10B981;
+  --color-error: #EF4444;
+  --color-warning: #F59E0B;
+  
+  /* Component specific */
+  --color-button-hover: #4630B8;
+  --color-input-bg: #FFFFFF;
+  --color-input-focus: #5741D9;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  /* Dark Mode Colors */
+  --color-primary: #8B7FDB;
+  --color-surface: #0D1421;
+  --color-surface-secondary: #1A202C;
+  --color-text-primary: #F7F9FB;
+  --color-text-secondary: #A0AEC0;
+  --color-border: #2D3748;
+  --color-accent: #5741D9;
+  --color-success: #34D399;
+  --color-error: #F87171;
+  --color-warning: #FCD34D;
+  
+  /* Component specific */
+  --color-button-hover: #9F92E0;
+  --color-input-bg: #1A202C;
+  --color-input-focus: #8B7FDB;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base styles */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Utility classes */
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.bg-surface-secondary {
+  background-color: var(--color-surface-secondary);
+}
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.border-default {
+  border-color: var(--color-border);
+}
+
+/* Components */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-button-hover);
+}
+
+.input-default {
+  background-color: var(--color-input-bg);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.input-default:focus {
+  border-color: var(--color-input-focus);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(87, 65, 217, 0.1);
+}
+
+[data-theme="dark"] .input-default:focus {
+  box-shadow: 0 0 0 3px rgba(139, 127, 219, 0.1);
 }

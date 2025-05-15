@@ -1,0 +1,1492 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+app/
+  (auth)/
+    login/
+      page.tsx
+    register/
+      page.tsx
+    layout.tsx
+  api/
+    auth/
+      [...nextauth]/
+        route.ts
+      register/
+        route.ts
+  globals.css
+  layout.tsx
+  page.tsx
+components/
+  providers.tsx
+hooks/
+  useAuth.ts
+lib/
+  auth/
+    authOptions.ts
+  log/
+    logger.ts
+  supabase/
+    supabase.ts
+middleware/
+  middleware.ts
+public/
+  file.svg
+  globe.svg
+  next.svg
+  vercel.svg
+  window.svg
+types/
+  types/
+    next-auth.d.ts
+.gitignore
+eslint.config.mjs
+next.config.ts
+package.json
+postcss.config.mjs
+README.md
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="app/(auth)/login/page.tsx">
+'use client';
+
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+
+export default function LoginPage() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get('from') || '/dashboard';
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleCredentialsLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                toast.error(result.error);
+            } else {
+                toast.success('ログインしました');
+                router.push(callbackUrl);
+            }
+        } catch {
+            toast.error('ログインに失敗しました');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGoogleLogin = () => {
+        setIsLoading(true);
+        signIn('google', { callbackUrl });
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8">
+                {/* Logo and Title */}
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                        Blockzei
+                    </h1>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        アカウントにログインして暗号資産の税金計算を始めましょう
+                    </p>
+                </div>
+
+                {/* Login Form */}
+                <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                    <form className="space-y-6" onSubmit={handleCredentialsLogin}>
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                メールアドレス
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    autoComplete="email"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    placeholder="email@example.com"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                パスワード
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <input
+                                    id="remember-me"
+                                    name="remember-me"
+                                    type="checkbox"
+                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                />
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                                    ログイン状態を保持
+                                </label>
+                            </div>
+
+                            <div className="text-sm">
+                                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                    パスワードを忘れた方
+                                </a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isLoading ? 'ログイン中...' : 'ログイン'}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div className="mt-6">
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">または</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 grid grid-cols-1 gap-3">
+                            <button
+                                onClick={handleGoogleLogin}
+                                disabled={isLoading}
+                                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                </svg>
+                                Googleでログイン
+                            </button>
+
+                            <button
+                                disabled={isLoading}
+                                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19.28 3.43L12 9.36L4.72 3.43L12 2L19.28 3.43Z" fill="#627EEA" />
+                                    <path d="M12 9.36L4.72 3.43L12 17.65V9.36Z" fill="#627EEA99" />
+                                    <path d="M12 9.36L19.28 3.43L12 17.65V9.36Z" fill="#627EEACC" />
+                                    <path d="M12 17.65L4.72 12.65L12 22L19.28 12.65L12 17.65Z" fill="#F5841F" />
+                                </svg>
+                                MetaMaskでログイン
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            アカウントをお持ちでない方は{' '}
+                            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                新規登録
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+</file>
+
+<file path="app/(auth)/register/page.tsx">
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
+
+export default function RegisterPage() {
+    const router = useRouter();
+
+    const [formData, setFormData] = useState({
+        email: '',
+        name: '',
+        password: '',
+        confirmPassword: '',
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    // const [agreeToTerms, setAgreeToTerms] = useState(false);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Validation
+        if (formData.password !== formData.confirmPassword) {
+            toast.error('パスワードが一致しません');
+            return;
+        }
+
+        if (formData.password.length < 8) {
+            toast.error('パスワードは8文字以上で入力してください');
+            return;
+        }
+
+        // if (!agreeToTerms) {
+        //     toast.error('利用規約に同意してください');
+        //     return;
+        // }
+
+        setIsLoading(true);
+
+        try {
+            // Register the user
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: formData.email,
+                    name: formData.name,
+                    password: formData.password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || '登録に失敗しました');
+            }
+
+            // Auto-login after successful registration
+            const signInResult = await signIn('credentials', {
+                email: formData.email,
+                password: formData.password,
+                redirect: false,
+            });
+
+            if (signInResult?.error) {
+                toast.error('自動ログインに失敗しました。ログインページから再度お試しください。');
+                router.push('/login');
+            } else {
+                toast.success('アカウントが作成されました！');
+                router.push('/dashboard');
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : '登録に失敗しました');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGoogleSignUp = () => {
+        setIsLoading(true);
+        signIn('google', { callbackUrl: '/dashboard' });
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8">
+                {/* Logo and Title */}
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                        Blockzei
+                    </h1>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        日本の暗号資産税金計算を簡単に
+                    </p>
+                </div>
+
+                {/* Registration Form */}
+                <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                お名前
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    autoComplete="name"
+                                    required
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    placeholder="山田太郎"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                メールアドレス
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    autoComplete="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    placeholder="email@example.com"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                パスワード
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="new-password"
+                                    required
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    placeholder="8文字以上"
+                                />
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                8文字以上の英数字を入力してください
+                            </p>
+                        </div>
+
+                        <div>
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                パスワード（確認）
+                            </label>
+                            <div className="mt-1">
+                                <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type="password"
+                                    autoComplete="new-password"
+                                    required
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                    placeholder="パスワードを再入力"
+                                />
+                            </div>
+                        </div>
+
+                        {/* <div className="flex items-center">
+                            <input
+                                id="agree-terms"
+                                name="agree-terms"
+                                type="checkbox"
+                                required
+                                checked={agreeToTerms}
+                                onChange={(e) => setAgreeToTerms(e.target.checked)}
+                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                            />
+                            <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                                <Link href="/terms" className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                    利用規約
+                                </Link>
+                                と
+                                <Link href="/privacy" className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                    プライバシーポリシー
+                                </Link>
+                                に同意します
+                            </label>
+                        </div> */}
+
+                        <div>
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isLoading ? '登録中...' : 'アカウントを作成'}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div className="mt-6">
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">または</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 grid grid-cols-1 gap-3">
+                            <button
+                                onClick={handleGoogleSignUp}
+                                disabled={isLoading}
+                                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                </svg>
+                                Googleで登録
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            既にアカウントをお持ちの方は{' '}
+                            <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                ログイン
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+</file>
+
+<file path="app/(auth)/layout.tsx">
+export default function AuthLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <>
+            {children}
+        </>
+    );
+}
+</file>
+
+<file path="app/api/auth/[...nextauth]/route.ts">
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth from 'next-auth';
+import { authOptions } from '@/lib/auth/authOptions';
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
+</file>
+
+<file path="app/api/auth/register/route.ts">
+// app/api/auth/register/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { supabaseAdmin } from "@/lib/supabase/supabase";
+import { logger } from "@/lib/log/logger";
+
+export async function POST(req: NextRequest) {
+    try {
+        const { email, name, password } = await req.json();
+
+        // Input validation
+        if (!email || !name || !password) {
+            return NextResponse.json({
+                error: "Missing required fields",
+                details: "Email, name, and password are required"
+            }, { status: 400 });
+        }
+
+        // Email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return NextResponse.json({
+                error: "Invalid email format"
+            }, { status: 400 });
+        }
+
+        // Check if user already exists
+        const { data: existingUser, error: userError } = await supabaseAdmin
+            .from("users")
+            .select("id")
+            .eq("email", email)
+            .single();
+
+        if (userError && userError.code !== "PGRST116") { // 'No rows found' is acceptable here
+            logger.error("Error checking existing user", {
+                error: userError.message,
+                email: email
+            });
+            return NextResponse.json({
+                error: "Failed to check user existence"
+            }, { status: 500 });
+        }
+
+        if (existingUser) {
+            return NextResponse.json({
+                error: "User already exists"
+            }, { status: 400 });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const now = new Date().toISOString();
+
+        // Create user
+        const { data: newUser, error: createError } = await supabaseAdmin
+            .from("users")
+            .insert({
+                email,
+                name,
+                password: hashedPassword,
+                created_at: now,
+                updated_at: now
+            })
+            .select('id')
+            .single();
+
+        if (createError) {
+            logger.error("Error registering user", {
+                error: createError.message,
+                email: email
+            });
+            return NextResponse.json({
+                error: "Failed to create user account"
+            }, { status: 500 });
+        }
+
+        // Log successful registration
+        logger.info("User registered successfully", {
+            userId: newUser.id,
+            email: email
+        });
+
+        return NextResponse.json({
+            success: true,
+            userId: newUser.id
+        });
+
+    } catch (err) {
+        logger.error("Registration failed", {
+            error: err instanceof Error ? err.message : String(err),
+            stack: err instanceof Error ? err.stack : undefined
+        });
+
+        return NextResponse.json({
+            error: "Internal server error during registration"
+        }, { status: 500 });
+    }
+}
+</file>
+
+<file path="app/globals.css">
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+</file>
+
+<file path="app/layout.tsx">
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Providers } from "@/components/providers";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Blockzei - Smart Crypto Tax Calculator for Japan",
+  description: "Making cryptocurrency tax compliance simple and accurate for Japanese investors",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  );
+}
+</file>
+
+<file path="app/page.tsx">
+import Image from "next/image";
+
+export default function Home() {
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={180}
+          height={38}
+          priority
+        />
+        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+          <li className="mb-2 tracking-[-.01em]">
+            Get started by editing{" "}
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
+              app/page.tsx
+            </code>
+            .
+          </li>
+          <li className="tracking-[-.01em]">
+            Save and see your changes instantly.
+          </li>
+        </ol>
+
+        <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={20}
+              height={20}
+            />
+            Deploy now
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read our docs
+          </a>
+        </div>
+      </main>
+      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/file.svg"
+            alt="File icon"
+            width={16}
+            height={16}
+          />
+          Learn
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/window.svg"
+            alt="Window icon"
+            width={16}
+            height={16}
+          />
+          Examples
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/globe.svg"
+            alt="Globe icon"
+            width={16}
+            height={16}
+          />
+          Go to nextjs.org →
+        </a>
+      </footer>
+    </div>
+  );
+}
+</file>
+
+<file path="components/providers.tsx">
+// components/providers.tsx
+'use client';
+
+import { SessionProvider } from "next-auth/react";
+import { ReactNode } from "react";
+
+export function Providers({ children }: { children: ReactNode }) {
+    return (
+        <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
+            {children}
+        </SessionProvider>
+    );
+}
+</file>
+
+<file path="hooks/useAuth.ts">
+'use client';
+
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+export function useAuth(redirectTo?: string) {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (redirectTo && status === 'unauthenticated') {
+            router.push(redirectTo);
+        }
+    }, [status, redirectTo, router]);
+
+    return {
+        user: session?.user,
+        isAuthenticated: status === 'authenticated',
+        isLoading: status === 'loading',
+    };
+}
+
+export function useRequireAuth(redirectTo: string = '/login') {
+    const { user, isLoading } = useAuth(redirectTo);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading && !user) {
+            router.push(redirectTo);
+        }
+    }, [user, isLoading, redirectTo, router]);
+
+    return { user, isLoading };
+}
+</file>
+
+<file path="lib/auth/authOptions.ts">
+// lib/auth/authOptions.ts
+import { AuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { createClient } from '@supabase/supabase-js';
+import { compare } from "bcryptjs";
+import { logger } from "../log/logger";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+// Initialize Supabase Admin client
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+async function getUserByEmail(email: string) {
+    try {
+        const { data, error } = await supabaseAdmin
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .single();
+
+        if (error) {
+            logger.error('Error fetching user by email:', {
+                email,
+                error: error.message,
+                code: error.code
+            });
+            return null;
+        }
+
+        return data;
+    } catch (err) {
+        logger.error('Exception in getUserByEmail:', {
+            email,
+            error: err instanceof Error ? err.message : String(err)
+        });
+        return null;
+    }
+}
+
+export const authOptions: AuthOptions = {
+    providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            }
+        }),
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error("Email and password are required");
+                }
+
+                const user = await getUserByEmail(credentials.email);
+
+                if (!user) {
+                    throw new Error("Invalid email or password");
+                }
+
+                try {
+                    const isValid = await compare(credentials.password, user.password);
+                    if (!isValid) {
+                        throw new Error("Invalid email or password");
+                    }
+
+                    return {
+                        id: user.id.toString(),
+                        email: user.email,
+                        name: user.name,
+                        image: user.image
+                    };
+                } catch (error) {
+                    logger.error("Authentication error:", {
+                        email: credentials.email,
+                        error: error instanceof Error ? error.message : String(error)
+                    });
+                    throw new Error("Authentication error");
+                }
+            },
+        }),
+    ],
+    callbacks: {
+        async signIn({ user, account }) {
+            logger.info("Sign in callback initiated", {
+                email: user.email,
+                provider: account?.provider
+            });
+
+            try {
+                if (account?.provider === 'google') {
+                    // Check if user exists
+                    const { data: existingUser, error: userError } = await supabaseAdmin
+                        .from('users')
+                        .select('id')
+                        .eq('email', user.email)
+                        .single();
+
+                    if (userError) {
+                        if (userError.code === 'PGRST116') { // "No rows found"
+                            logger.info('Creating new user account for Google auth', { email: user.email });
+
+                            const now = new Date().toISOString();
+
+                            const { data, error } = await supabaseAdmin
+                                .from('users')
+                                .insert({
+                                    email: user.email,
+                                    name: user.name,
+                                    image: user.image,
+                                    created_at: now,
+                                    updated_at: now
+                                })
+                                .select('id')
+                                .single();
+
+                            if (error) {
+                                logger.error('Error creating user during Google auth:', {
+                                    email: user.email,
+                                    error: error.message,
+                                    code: error.code
+                                });
+                                return false;
+                            }
+
+                            // Set user properties from newly created user
+                            user.id = data.id;
+
+                            logger.info('New Google user created', {
+                                userId: user.id
+                            });
+                        } else {
+                            // Some other database error occurred
+                            logger.error('Error checking existing user during Google auth:', {
+                                email: user.email,
+                                error: userError.message,
+                                code: userError.code
+                            });
+                            return true;
+                        }
+                    } else if (existingUser) {
+                        // User exists, update user object with db data
+                        user.id = existingUser.id;
+
+                        logger.info('Existing user retrieved for Google auth', {
+                            userId: user.id
+                        });
+                    }
+                }
+                return true;
+            } catch (error) {
+                logger.error("SignIn callback error:", {
+                    email: user.email,
+                    error: error instanceof Error ? error.message : String(error)
+                });
+                return true; // Still allow sign in even if there's an error
+            }
+        },
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.email = user.email;
+                token.name = user.name;
+                token.image = user.image;
+
+                logger.debug("JWT callback: Token updated with user data", {
+                    userId: user.id
+                });
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (session.user) {
+                session.user.id = token.id as string;
+                session.user.email = token.email as string;
+                session.user.name = token.name as string;
+                session.user.image = token.image as string;
+
+                logger.debug("Session callback: Session updated with token data", {
+                    userId: session.user.id
+                });
+            }
+            return session;
+        },
+    },
+    pages: {
+        signIn: '/login',
+        error: '/login',
+    },
+    session: {
+        strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+    },
+    secret: process.env.NEXTAUTH_SECRET,
+    debug: process.env.NODE_ENV === "development",
+};
+</file>
+
+<file path="lib/log/logger.ts">
+// lib/log/logger.ts
+type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
+
+interface LogData {
+    [key: string]: string | number | boolean | null | undefined | Date |
+    Record<string, unknown> | Array<unknown> | Error;
+}
+
+const LOG_LEVELS: Record<LogLevel, number> = {
+    'DEBUG': 0,
+    'INFO': 1,
+    'WARN': 2,
+    'ERROR': 3
+};
+
+const CURRENT_LOG_LEVEL = process.env.NODE_ENV === 'production' ? 'INFO' : 'DEBUG';
+
+export function log(level: LogLevel, message: string, data: LogData = {}) {
+    if (LOG_LEVELS[level] < LOG_LEVELS[CURRENT_LOG_LEVEL as LogLevel]) {
+        return;
+    }
+
+    const timestamp = new Date().toISOString();
+    const logEntry = {
+        timestamp,
+        level,
+        message,
+        ...data,
+    };
+
+    // Format based on log level
+    switch (level) {
+        case 'ERROR':
+            console.error(JSON.stringify(logEntry));
+            break;
+        case 'WARN':
+            console.warn(JSON.stringify(logEntry));
+            break;
+        case 'INFO':
+            console.info(JSON.stringify(logEntry));
+            break;
+        case 'DEBUG':
+            console.debug(JSON.stringify(logEntry));
+            break;
+    }
+}
+
+export const logger = {
+    debug: (message: string, data?: LogData) => log('DEBUG', message, data),
+    info: (message: string, data?: LogData) => log('INFO', message, data),
+    warn: (message: string, data?: LogData) => log('WARN', message, data),
+    error: (message: string, data?: LogData) => log('ERROR', message, data),
+};
+</file>
+
+<file path="lib/supabase/supabase.ts">
+// lib/supabase.ts
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables');
+}
+
+export const supabaseAdmin = createClient(
+    supabaseUrl,
+    supabaseServiceKey || ''
+);
+
+export const supabaseClient = createClient(
+    supabaseUrl,
+    supabaseAnonKey
+);
+
+export { supabaseClient as supabase };
+</file>
+
+<file path="middleware/middleware.ts">
+// middleware.ts (enhanced version)
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
+
+const publicPaths = ['/', '/login', '/register', '/terms', '/privacy'];
+const authPaths = ['/login', '/register'];
+const protectedPaths = ['/dashboard', '/transactions', '/settings', '/report'];
+
+export async function middleware(request: NextRequest) {
+    const token = await getToken({ req: request });
+    const isAuth = !!token;
+    const { pathname } = request.nextUrl;
+
+    // Check if path is in our defined routes
+    const isPublicPath = publicPaths.includes(pathname);
+    const isAuthPath = authPaths.includes(pathname);
+    const isProtectedPath = protectedPaths.some(path => pathname.startsWith(path));
+
+    // Allow public paths
+    if (isPublicPath && !isAuthPath) {
+        return NextResponse.next();
+    }
+
+    // Redirect authenticated users away from auth pages
+    if (isAuthPath && isAuth) {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
+    // Protect dashboard routes
+    if (isProtectedPath && !isAuth) {
+        const url = new URL('/login', request.url);
+        url.searchParams.set('from', pathname);
+        return NextResponse.redirect(url);
+    }
+
+    // Check subscription status for premium features
+    if (isAuth && token) {
+        const isPremiumPath = pathname.startsWith('/report') || pathname.startsWith('/advanced');
+        if (isPremiumPath && token.subscription !== 'pro') {
+            return NextResponse.redirect(new URL('/pricing', request.url));
+        }
+    }
+
+    return NextResponse.next();
+}
+
+export const config = {
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         */
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    ],
+};
+</file>
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="types/types/next-auth.d.ts">
+// types/next-auth.d.ts
+import { DefaultSession } from "next-auth"
+
+declare module "next-auth" {
+    interface Session {
+        user: {
+            id: string;
+            image?: string;
+        } & DefaultSession["user"]
+    }
+
+    interface User {
+        id: string;
+        email: string;
+        name?: string;
+        image?: string;
+    }
+}
+
+declare module "next-auth/jwt" {
+    interface JWT {
+        id: string;
+        email: string;
+        name?: string;
+        image?: string;
+    }
+}
+</file>
+
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path="eslint.config.mjs">
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+];
+
+export default eslintConfig;
+</file>
+
+<file path="next.config.ts">
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+};
+
+export default nextConfig;
+</file>
+
+<file path="package.json">
+{
+  "name": "blockzei-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@auth/supabase-adapter": "^1.9.1",
+    "@supabase/supabase-js": "^2.49.4",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.2",
+    "next": "15.3.2",
+    "next-auth": "^4.24.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+</file>
+
+<file path="postcss.config.mjs">
+const config = {
+  plugins: ["@tailwindcss/postcss"],
+};
+
+export default config;
+</file>
+
+<file path="README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+</file>
+
+</files>

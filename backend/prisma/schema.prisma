@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  date          DateTime
+  pair          String
+  side          String   // BUY or SELL
+  amount        Float
+  price         Float
+  fee           Float    @default(0)
+  feeCoin       String?
+  realizedPnl   Float?
+  
+  // Metadata
+  uploadId      String?  // Track which upload this came from
+  isProcessed   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("transactions")
+}
+
+model Upload {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String
+  fileSize     Int
+  status       String   @default("uploaded") // uploaded, processed, error
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  @@map("uploads")
+}

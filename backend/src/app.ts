@@ -8,8 +8,12 @@ import path from 'path';
 import { PrismaClient } from './generated/prisma';
 import fs from 'fs';
 
+import { TaxCalculator } from './services/taxCalculator';
+import { PDFGenerator } from './services/pdfGenerator';
+
 const app = express();
 const prisma = new PrismaClient();
+const taxCalculator = new TaxCalculator();
 
 // Middleware
 app.use(helmet());
@@ -123,7 +127,7 @@ async function parseBinanceCSV(filename: string) {
     
   } catch (error) {
     console.error('CSV parsing error:', error);
-    throw new Error(`Failed to parse CSV: ${error}`);
+    throw new Error(`Failed to parse CSV: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -154,7 +158,8 @@ app.post('/api/upload-csv', upload.single('csvFile'), async (req, res) => {
   } catch (error) {
     console.error('Processing error:', error);
     res.status(500).json({ 
-      error: 'Processing failed'
+      error: 'Processing failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -171,6 +176,65 @@ app.get('/api/transactions', async (req, res) => {
   } catch (error) {
     console.error('Database error:', error);
     res.status(500).json({ error: 'Failed to fetch transactions' });
+  }
+});
+
+// Get tax calculation
+app.get('/api/tax-summary', async (req, res) => {
+  try {
+    const year = parseInt(req.query.year as string) || 2024;
+    const taxSummary = await taxCalculator.calculateTaxes(year);
+    
+    res.json({
+      success: true,
+      year,
+      summary: taxSummary
+    });
+  } catch (error) {
+    console.error('Tax calculation error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to calculate taxes',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Generate PDF report
+app.get('/api/generate-report', async (req, res) => {
+  try {
+    const year = parseInt(req.query.year as string) || 2024;
+    
+    // Get tax summary
+    const taxSummary = await taxCalculator.calculateTaxes(year);
+    
+    // Get transactions for the year
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        date: {
+          gte: new Date(`${year}-01-01`),
+          lte: new Date(`${year}-12-31`)
+        }
+      },
+      orderBy: { date: 'asc' }
+    });
+
+    // Generate HTML report
+    const htmlContent = PDFGenerator.generateTaxReport(taxSummary, year, transactions);
+    
+    // Set headers for download
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Disposition', `attachment; filename="crypto-tax-report-${year}.html"`);
+    
+    res.send(htmlContent);
+    
+  } catch (error) {
+    console.error('Report generation error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to generate report',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 

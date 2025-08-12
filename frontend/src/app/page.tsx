@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Upload, FileText, Calculator, CheckCircle } from 'lucide-react';
 import TransactionTable from '../components/TransactionTable';
+import TaxSummary from '../components/TaxSummary';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -77,7 +78,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Upload Section */}
           <div className="lg:col-span-1">
             <div className="bg-white shadow-md rounded-lg p-6 sticky top-8">
@@ -159,12 +160,21 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Transaction Table */}
-          <div className="lg:col-span-2">
-            <TransactionTable 
-              shouldRefresh={refreshTable}
-              onRefreshComplete={handleTableRefreshComplete}
-            />
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <div className="space-y-8">
+              {/* Tax Summary */}
+              <TaxSummary 
+                shouldRefresh={refreshTable}
+                onRefreshComplete={handleTableRefreshComplete}
+              />
+
+              {/* Transaction Table */}
+              <TransactionTable 
+                shouldRefresh={refreshTable}
+                onRefreshComplete={handleTableRefreshComplete}
+              />
+            </div>
           </div>
         </div>
 

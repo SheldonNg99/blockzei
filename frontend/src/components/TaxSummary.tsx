@@ -38,7 +38,7 @@ export default function TaxSummary({ shouldRefresh, onRefreshComplete }: TaxSumm
     setError(null);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/tax-summary?year=${year}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tax-summary?year=${year}`);
       if (response.ok) {
         const data = await response.json();
         setSummary(data.summary);
@@ -86,7 +86,7 @@ export default function TaxSummary({ shouldRefresh, onRefreshComplete }: TaxSumm
 
   const handleDownloadReport = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/generate-report?year=${year}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/generate-report?year=${year}`);
       if (response.ok) {
         const htmlContent = await response.text();
         

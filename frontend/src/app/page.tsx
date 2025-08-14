@@ -37,7 +37,7 @@ export default function Home() {
     formData.append('csvFile', file);
 
     try {
-      const response = await fetch('http://localhost:3001/api/upload-csv', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload-csv`, {
         method: 'POST',
         body: formData,
       });

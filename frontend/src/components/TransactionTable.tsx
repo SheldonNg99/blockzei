@@ -31,7 +31,7 @@ export default function TransactionTable({ shouldRefresh, onRefreshComplete }: T
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:3001/api/transactions');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions`);
       if (response.ok) {
         const data = await response.json();
         setTransactions(data.transactions);

@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import multer from 'multer';
 import path from 'path';
-import { PrismaClient } from './generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 
 import { TaxCalculator } from './services/taxCalculator';
